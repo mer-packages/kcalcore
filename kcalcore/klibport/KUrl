@@ -1,0 +1,6 @@
+#ifndef _KURL_H_
+#define _KURL_H_
+
+#include <meego_port.h>
+
+#endif

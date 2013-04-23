@@ -1,0 +1,32 @@
+Name: kcalcore-qt5
+Summary: Port of KDE kcalcore calendar library
+Version: 4.10.2
+Release: 1
+Group: System/Libraries
+License: LGPL 2
+URL: https://github.com/mer-packages/kcalcore
+Sources:
+    - "%{name}-%{version}.tar.bz2"
+Description: |
+    Port of KDE kcalcore calendar library
+PkgConfigBR:
+    - Qt5Core
+    - Qt5Gui
+    - Qt5DBus
+    - dbus-1
+    - timed-qt5
+Configure: none
+Builder: qmake
+Files:
+- "%{_libdir}/libkcalcoren-qt5.so.*"
+SubPackages:
+ - Name: devel
+   Summary: Development files for kcalcore
+   Group: Development/Libraries
+   Files:
+       - "%{_includedir}/kcalcoren-qt5/*"
+       - "%{_libdir}/libkcalcoren-qt5.so"
+       - "%{_libdir}/pkgconfig/*.pc"
+   Description: |
+    This package contains the files necessary to develop
+    applications using kcalcore

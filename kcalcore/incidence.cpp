@@ -35,8 +35,11 @@
 #include "incidence.h"
 #include "calformat.h"
 
+#ifdef MIMETYPE
 #include <KMimeType>
-#include <KTemporaryFile>
+#endif
+
+#include <ktemporaryfile.h>
 
 #include <QTextDocument> // for Qt::escape() and Qt::mightBeRichText()
 #include <QTime>
@@ -422,7 +425,11 @@ QString Incidence::richDescription() const
   if ( descriptionIsRich() ) {
     return d->mDescription;
   } else {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    return d->mDescription.toHtmlEscaped().replace( '\n', "<br/>" );
+#else
     return Qt::escape( d->mDescription ).replace( '\n', "<br/>" );
+#endif
   }
 }
 
@@ -458,7 +465,11 @@ QString Incidence::richSummary() const
   if ( summaryIsRich() ) {
     return d->mSummary;
   } else {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    return d->mSummary.toHtmlEscaped().replace( '\n', "<br/>" );
+#else
     return Qt::escape( d->mSummary ).replace( '\n', "<br/>" );
+#endif
   }
 }
 
@@ -742,7 +753,11 @@ QString Incidence::writeAttachmentToTempFile( const Attachment::Ptr &attachment 
   }
   KTemporaryFile *file = new KTemporaryFile();
 
+#ifdef MIMETYPE
   QStringList patterns = KMimeType::mimeType( attachment->mimeType() )->patterns();
+#else
+  QStringList patterns;
+#endif
 
   if ( !patterns.empty() ) {
     file->setSuffix( QString( patterns.first() ).remove( '*' ) );
@@ -935,7 +950,11 @@ QString Incidence::richLocation() const
   if ( locationIsRich() ) {
     return d->mLocation;
   } else {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    return d->mLocation.toHtmlEscaped().replace( '\n', "<br/>" );
+#else
     return Qt::escape( d->mLocation ).replace( '\n', "<br/>" );
+#endif
   }
 }
 

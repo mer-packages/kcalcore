@@ -1,0 +1,3 @@
+LIBS += -L/usr/lib/ -lkcalcoren
+DEPENDPATH += /usr/include/kcalcoren
+INCLUDEPATH += /usr/include/kcalcoren
