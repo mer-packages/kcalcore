@@ -13,10 +13,13 @@ PkgConfigBR:
     - Qt5Core
     - Qt5Gui
     - Qt5DBus
+    - Qt5Test
     - dbus-1
     - timed-qt5
+    - libical
+    - uuid
 Configure: none
-Builder: qmake
+Builder: qmake5
 Files:
 - "%{_libdir}/libkcalcoren-qt5.so.*"
 SubPackages:
