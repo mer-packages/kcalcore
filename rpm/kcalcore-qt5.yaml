@@ -15,7 +15,6 @@ PkgConfigBR:
     - Qt5DBus
     - Qt5Test
     - dbus-1
-    - timed-qt5
     - libical
     - uuid
 Configure: none

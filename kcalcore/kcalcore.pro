@@ -8,13 +8,13 @@ VERSION += 4.10.2
 
 CONFIG += link_pkgconfig
 PKGCONFIG += libical
-equals(QT_MAJOR_VERSION, 4): PKGCONFIG += timed
-equals(QT_MAJOR_VERSION, 5): PKGCONFIG += timed-qt5
+#equals(QT_MAJOR_VERSION, 4): PKGCONFIG += timed
+#equals(QT_MAJOR_VERSION, 5): PKGCONFIG += timed-qt5
 
 DEFINES += MEEGO \
     UUID \
-    KCALCORE_FOR_MEEGO \
-    TIMED_SUPPORT
+    KCALCORE_FOR_MEEGO
+#    TIMED_SUPPORT
 
 QT += dbus
 

@@ -168,7 +168,7 @@ KTzfileTimeZoneSource *KSystemTimeZonesPrivate::tzfileSource()
 KSystemTimeZones::KSystemTimeZones()
   : d(0)
 {
-#ifndef TIMED_SUPPORT
+#if !defined(TIMED_SUPPORT) && !defined(KCALCORE_FOR_MEEGO)
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.connect(QString(), QString(), KTIMEZONED_DBUS_IFACE, "configChanged", this, SLOT(configChanged()));
     dbus.connect(QString(), QString(), KTIMEZONED_DBUS_IFACE, "zonetabChanged", this, SLOT(zonetabChanged(QString)));
@@ -248,7 +248,7 @@ KSystemTimeZonesPrivate *KSystemTimeZonesPrivate::instance()
     if (!m_instance)
     {
         m_instance = new KSystemTimeZonesPrivate;
-#ifndef TIMED_SUPPORT
+#if !defined(TIMED_SUPPORT) && !defined(KCALCORE_FOR_MEEGO)
         // A KSystemTimeZones instance is required only to catch D-Bus signals.
         m_parent = new KSystemTimeZones;
         // Ensure that the KDED time zones module has initialized. The call loads the module on demand.
@@ -272,8 +272,10 @@ kDebug(161)<<"instance(): ... initialised";
             m_instance->readZoneTab(false);
 #endif
         setLocalZone();
-        if (!m_localZone.isValid())
+        if (!m_localZone.isValid()) {
+            kDebug() << "m_localZone invalid";
             m_localZone = KTimeZone::utc();   // ensure a time zone is always returned
+        }
 
         qAddPostRoutine(KSystemTimeZonesPrivate::cleanup);
     }
@@ -282,15 +284,7 @@ kDebug(161)<<"instance(): ... initialised";
 
 void KSystemTimeZonesPrivate::readConfig(bool init)
 {
-#ifndef TIMED_SUPPORT
-    KConfig config(QLatin1String("ktimezonedrc"));
-    if (!init)
-        config.reparseConfiguration();
-    KConfigGroup group(&config, "TimeZones");
-    m_zoneinfoDir   = group.readEntry("ZoneinfoDir");
-    m_zonetab       = group.readEntry("Zonetab");
-    m_localZoneName = group.readEntry("LocalZone");
-#else
+#ifdef TIMED_SUPPORT
     m_zoneinfoDir = QLatin1String("/usr/share/zoneinfo");
     m_zonetab = QLatin1String("/usr/share/zoneinfo/zone.tab");
     Maemo::Timed::Interface timed;
@@ -323,6 +317,33 @@ void KSystemTimeZonesPrivate::readConfig(bool init)
 	f.close();
       }
     }
+#elif defined(KCALCORE_FOR_MEEGO)
+    m_zoneinfoDir = QLatin1String("/usr/share/zoneinfo");
+    m_zonetab = QLatin1String("/usr/share/zoneinfo/zone.tab");
+    QFileInfo info("/etc/localtime");
+    if (info.isSymLink()) {
+      m_localZoneName = info.symLinkTarget().mid(m_zoneinfoDir.size() + 1);
+      kDebug() << "localzone from /etc/localtime: " << m_localZoneName;
+    } else {
+#if !defined(QT_NO_DEBUG_OUTPUT)
+      kError() << "cannot get localzone from /etc/localtime";
+      kDebug() << "get localzone from /etc/timezone"; 
+#endif
+      QFile f("/etc/timezone");
+      if (f.open(QIODevice::ReadOnly)) {
+          QTextStream str(&f);
+          m_localZoneName = str.readLine();
+          f.close();
+      }
+    }
+#else
+    KConfig config(QLatin1String("ktimezonedrc"));
+    if (!init)
+        config.reparseConfiguration();
+    KConfigGroup group(&config, "TimeZones");
+    m_zoneinfoDir   = group.readEntry("ZoneinfoDir");
+    m_zonetab       = group.readEntry("Zonetab");
+    m_localZoneName = group.readEntry("LocalZone");
 #endif
     if (!init)
         setLocalZone();
@@ -352,7 +373,7 @@ void KSystemTimeZonesPrivate::setLocalZone()
 
 void KSystemTimeZonesPrivate::cleanup()
 {
-#ifndef TIMED_SUPPORT
+#if !defined(TIMED_SUPPORT) && !defined(KCALCORE_FOR_MEEGO)
     delete m_parent;
 #endif
     delete m_instance;
