@@ -23,7 +23,6 @@ BuildRequires:  pkgconfig(Qt5Gui)
 BuildRequires:  pkgconfig(Qt5DBus)
 BuildRequires:  pkgconfig(Qt5Test)
 BuildRequires:  pkgconfig(dbus-1)
-BuildRequires:  pkgconfig(timed-qt5)
 BuildRequires:  pkgconfig(libical)
 BuildRequires:  pkgconfig(uuid)
 

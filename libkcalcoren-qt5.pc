@@ -8,6 +8,6 @@ Name: Kcalcore-qt5
 Description: KDE kcalcore calendar library
 Version: 4.10.2
 Libs: -L${libdir} -lkcalcoren-qt5 
-Libs.private: -lical -licalss -licalvcal -ltimed-qt5 -L/usr/lib -lQt5Gui -lQt5Core -lGLESv2 -lpthread   
+Libs.private: -lical -licalss -licalvcal -L/usr/lib -lQt5Gui -lQt5Core -lGLESv2 -lpthread   
 Cflags:  -I${includedir}
 
