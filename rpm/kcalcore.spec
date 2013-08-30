@@ -9,7 +9,7 @@ Name:       kcalcore
 # << macros
 
 Summary:    Extended KDE kcal calendar library port for Maemo
-Version:    4.10.2
+Version:    4.10.3
 Release:    1
 Group:      System/Libraries
 License:    LGPLv2
@@ -24,6 +24,7 @@ BuildRequires:  pkgconfig(sqlite3)
 BuildRequires:  pkgconfig(uuid)
 BuildRequires:  doxygen
 BuildRequires:  fdupes
+BuildRequires:  pkgconfig(timed-qt5)
 
 %description
 %{summary}.
