@@ -25,6 +25,7 @@ BuildRequires:  pkgconfig(Qt5Test)
 BuildRequires:  pkgconfig(dbus-1)
 BuildRequires:  pkgconfig(libical)
 BuildRequires:  pkgconfig(uuid)
+BuildRequires:  pkgconfig(timed-qt5)
 
 %description
 Port of KDE kcalcore calendar library
