@@ -40,9 +40,11 @@
 
 #include <cstdlib>
 
-#define kDebug(x) qDebug() << __FILE__":" << __LINE__ << "-"
+#define kDebug(x) kCalcoreDebug(__FILE__, __LINE__)
 #define kWarning(x) qWarning() << __FILE__":" << __LINE__ << "-"
 #define kError(x) qCritical() << __FILE__":" << __LINE__ << "-"
+
+QDebug kCalcoreDebug(const char * filename, int line);
 
 
 class KStringHandler 
