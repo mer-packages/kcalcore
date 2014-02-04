@@ -31,6 +31,31 @@ KLocale* KGlobal::locale()
   return plocale;
 }
 
+
+class KNoDebugStream: public QIODevice
+{
+  // Q_OBJECT
+public:
+  KNoDebugStream() { open(WriteOnly); }
+  bool isSequential() const { return true; }
+  qint64 readData(char *, qint64) { return 0; /* eof */ }
+  qint64 readLineData(char *, qint64) { return 0; /* eof */ }
+  qint64 writeData(const char *, qint64 len) { return len; }
+};
+
+QDebug kCalcoreDebug(const char *filename, int line)
+{
+  static bool enabled = (getenv("KCALDEBUG") != 0 && !QString(getenv("KCALDEBUG")).isEmpty());
+  static KNoDebugStream noDebug;
+
+  if (enabled) {
+    return qDebug() << filename << ":" << line << "-";
+  }
+
+  return QDebug(&noDebug);
+}
+
+
 static inline void put_it_in( QChar *buffer, int& index, const QString &s )
 {
   for ( int l = 0; l < s.length(); l++ )
