@@ -7,7 +7,7 @@ INCLUDEPATH += . versit klibport kdedate tests /usr/include/libical
 VERSION += 4.10.2
 
 CONFIG += link_pkgconfig
-PKGCONFIG += libical
+PKGCONFIG += libical uuid
 #equals(QT_MAJOR_VERSION, 4): PKGCONFIG += timed
 
 DEFINES += MEEGO \
