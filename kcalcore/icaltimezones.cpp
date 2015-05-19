@@ -1313,10 +1313,10 @@ QList<QDateTime> ICalTimeZoneSourcePrivate::parsePhase( icalcomponent *c,
   }
 
   // Convert DTSTART to QDateTime, and from local time to UTC
-  const QDateTime localStart = toQDateTime( dtstart );   // local time
   dtstart.second -= prevOffset;
   dtstart.is_utc = 1;
   const QDateTime utcStart = toQDateTime( icaltime_normalize( dtstart ) );   // UTC
+  const QDateTime localStart = utcStart.toLocalTime();  // local time
 
   transitions += utcStart;
   if ( recurs ) {
