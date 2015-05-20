@@ -623,6 +623,16 @@ void Constraint::appendDateTime( const QDate &date, const QTime &time,
                                  QList<KDateTime> &list ) const
 {
   KDateTime dt( date, time, timespec );
+  KDateTime nonTimespecDt( date, time, KDateTime::Spec::UTC() );
+  if ( !dt.isValid() && nonTimespecDt.isValid() && timespec.utcOffset() == 0 ) {
+    // This is to fix an issue where CalDAV servers can provide a VTIMEZONE
+    // definition for CEST (eg "Europe/Berlin") with a DAYLIGHT component like:
+    // "DTSTART:19700329T020000\r\n"
+    // "RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3\r\n"
+    // This will fail after 1981 since the system definition differs, resulting
+    // in an invalid KDateTime due to the "invalid" timespec.
+    dt = nonTimespecDt; // the offset is identical, so the date-time will match.
+  }
   if ( dt.isValid() ) {
     if ( secondOccurrence ) {
       dt.setSecondOccurrence( true );
