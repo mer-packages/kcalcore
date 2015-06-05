@@ -9,7 +9,7 @@ Name:       kcalcore-qt5
 # << macros
 
 Summary:    Port of KDE kcalcore calendar library
-Version:    4.10.2
+Version:    4.99.0
 Release:    1
 Group:      System/Libraries
 License:    LGPL 2
