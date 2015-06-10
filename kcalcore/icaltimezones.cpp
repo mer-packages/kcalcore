@@ -1313,7 +1313,6 @@ QList<QDateTime> ICalTimeZoneSourcePrivate::parsePhase( icalcomponent *c,
   }
 
   // Convert DTSTART to QDateTime, and from local time to UTC
-  const QDateTime localStart = toQDateTime( dtstart );   // local time
   dtstart.second -= prevOffset;
   dtstart.is_utc = 1;
   const QDateTime utcStart = toQDateTime( icaltime_normalize( dtstart ) );   // UTC
@@ -1325,9 +1324,8 @@ QList<QDateTime> ICalTimeZoneSourcePrivate::parsePhase( icalcomponent *c,
      * Note that we had to get DTSTART, TZOFFSETFROM, TZOFFSETTO before reading
      * recurrences.
      */
-    const KDateTime klocalStart( localStart, KDateTime::Spec::ClockTime() );
-    const KDateTime maxTime( MAX_DATE(), KDateTime::Spec::ClockTime() );
-    Recurrence recur;
+    const KDateTime kutcStart( utcStart, KDateTime::Spec::UTC() );
+    const KDateTime maxTime( MAX_DATE(), KDateTime::Spec::UTC() );
     icalproperty *p = icalcomponent_get_first_property( c, ICAL_ANY_PROPERTY );
     while ( p ) {
       icalproperty_kind kind = icalproperty_isa( p );
@@ -1360,21 +1358,19 @@ QList<QDateTime> ICalTimeZoneSourcePrivate::parsePhase( icalcomponent *c,
         ICalFormat icf;
         ICalFormatImpl impl( &icf );
         impl.readRecurrence( icalproperty_get_rrule( p ), &r );
-        r.setStartDt( klocalStart );
-        // The end date time specified in an RRULE should be in UTC.
-        // Convert to local time to avoid timesInInterval() getting things wrong.
-        if ( r.duration() == 0 ) {
-          KDateTime end( r.endDt() );
-          if ( end.timeSpec() == KDateTime::Spec::UTC() ) {
-            end.setTimeSpec( KDateTime::Spec::ClockTime() );
-            r.setEndDt( end.addSecs( prevOffset ) );
-          }
+        r.setStartDt( kutcStart );
+
+        // the end date time specified must be in UTC
+        // we can not guarantee correctness if this is not the case
+        if (r.duration() == 0 && r.endDt().timeSpec() != KDateTime::Spec::UTC()) {
+          kDebug() << "UNTIL in RRULE must be specified in UTC";
+          break;
         }
-        const DateTimeList dts = r.timesInInterval( klocalStart, maxTime );
+
+        const DateTimeList dts = r.timesInInterval( kutcStart, maxTime );
         for ( int i = 0, end = dts.count();  i < end;  ++i ) {
           QDateTime utc = dts[i].dateTime();
-          utc.setTimeSpec( Qt::UTC );
-          transitions += utc.addSecs( -prevOffset );
+          transitions += utc;
         }
         break;
       }
