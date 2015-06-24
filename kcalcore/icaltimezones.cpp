@@ -1364,7 +1364,7 @@ QList<QDateTime> ICalTimeZoneSourcePrivate::parsePhase( icalcomponent *c,
         // we can not guarantee correctness if this is not the case
         if (r.duration() == 0 && r.endDt().timeSpec() != KDateTime::Spec::UTC()) {
           kDebug() << "UNTIL in RRULE must be specified in UTC";
-          return transitions;
+          break;
         }
 
         const DateTimeList dts = r.timesInInterval( kutcStart, maxTime );
