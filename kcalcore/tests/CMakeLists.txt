@@ -1,29 +1,47 @@
+cmake_minimum_required(VERSION 2.8.11)
+
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+FIND_PACKAGE(Qt5Core)
+FIND_PACKAGE(Qt5Test)
 
-include_directories(${LIBICAL_INCLUDE_DIRS})
+include_directories(${LIBICAL_INCLUDE_DIRS} ${QT_INCLUDE_DIRS} ../ ../versit ../klibport ../kdedate)
 
+macro (KCALCORE_ADD_UNIT_TEST _test_NAME)
+    kcalcore_add_executable(${_test_NAME} ${ARGN})
+    set(_executable ${EXECUTABLE_OUTPUT_PATH}/${_test_NAME})
+endmacro (KCALCORE_ADD_UNIT_TEST)
+
+macro (KCALCORE_ADD_EXECUTABLE _target_NAME)
+    set(_type "NOGUI")
+    set(_add_executable_param)
+    set(_type "RUN_UNINSTALLED ${_type}")
+    add_executable(${_target_NAME} ${_add_executable_param} ${ARGN})
+    set_target_properties(${_target_NAME} PROPERTIES COMPILE_FLAGS -DKDESRCDIR="\\"${CMAKE_CURRENT_SOURCE_DIR}\\"")
+endmacro (KCALCORE_ADD_EXECUTABLE)
 
 macro(macro_unit_tests)
   foreach(_testname ${ARGN})
-    kde4_add_unit_test(${_testname} NOGUI ${_testname}.cpp)
+    kcalcore_add_unit_test(${_testname} ${_testname}.cpp)
     target_link_libraries(${_testname}
-      ${KDE4_KDECORE_LIBS}
       ${LIBICAL_LIBRARIES}
-      ${QT_QTGUI_LIBRARY}
-      ${QT_QTTEST_LIBRARY}
-      kcalcore
+      ical
+      Qt5::Core
+      Qt5::Test
+      kcalcoren-qt5
     )
   endforeach()
 endmacro()
 
 macro(macro_exec_tests)
   foreach(_testname ${ARGN})
-    kde4_add_executable(${_testname} NOGUI TEST ${_testname}.cpp)
+    kcalcore_add_executable(${_testname} ${_testname}.cpp)
     target_link_libraries(${_testname}
-      ${KDE4_KDECORE_LIBS}
-      ${QT_QTCORE_LIBRARY}
-      ${QT_QTTEST_LIBRARY}
-      kcalcore
+      ical
+      Qt5::Core
+      Qt5::Test
+      kcalcoren-qt5
     )
   endforeach()
 endmacro()
@@ -44,7 +62,6 @@ macro_unit_tests(
   testjournal
   testmemorycalendar
   testperiod
-  testfreebusyperiod
   testperson
   testrecurtodo
   testsortablelist

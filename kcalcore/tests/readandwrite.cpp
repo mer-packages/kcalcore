@@ -26,7 +26,6 @@
 
 #include <kaboutdata.h>
 #include <kdebug.h>
-#include <klocalizedstring.h>
 #include <kcomponentdata.h>
 #include <kcmdlineargs.h>
 
